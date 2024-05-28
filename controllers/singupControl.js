@@ -1,4 +1,5 @@
 const signupModel = require('../models/singupmodel');
+const bcrypt = require('bcrypt');
 
 module.exports.postsignUpData = async (req, res) => {
     try {
@@ -9,14 +10,13 @@ module.exports.postsignUpData = async (req, res) => {
         }
 
         // Create signup data
-        const signupData = await signupModel.create({
-            name: name,
-            email: email,
-            password: password
-        });
+        const saltRounds =10;
+        bcrypt.hash(password,saltRounds,(err,hash)=>{
+              signupModel.create({name,email,password:hash});
+              res.status(201).json({message:'new user signup successfully'})
+        })
 
         // Respond with the created data
-        res.status(200).json({ signupData: signupData });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });

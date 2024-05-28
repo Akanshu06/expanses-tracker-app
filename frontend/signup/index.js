@@ -9,7 +9,7 @@ signUpForm.addEventListener('submit',(event)=>{
     axios.post('http://localhost:2000/user/signup',signupDetails)
     .then((response)=>{
         console.log(response.email);
-        if(response.status===200){
+        if(response.status===201){
             document.body.innerHTML=`<div style='color:red'><h1>SignUp success</h1></div>`
         }else{
             throw new Error('not found')

@@ -1,20 +1,26 @@
 
 const { where } = require('sequelize');
 const signupData = require('../models/singupmodel')
+const bcrypt = require('bcrypt')
 
 module.exports.checkingDetails=async (req,res)=>{
+     try{
      const email= req.body.email;
      const password = req.body.password;
      if(stringValidate(email)||stringValidate(password)){
-          res.status(400).json({message: 'email or pass are missing'})
+          res.status(400).json({message: 'email or pass missing '})
      }
-     const saveUser =  await signupData.findAll({where:{email}})
-     try{
-          if(saveUser.length === 0){
-               res.status(401).json({massage:'password or email is in correct'})
-          }else{
-               res.status(200).json({message:'login sucsses'})
-          }
+     const user = await signupData.findOne({ where: { email } });
+     if (!user) {
+         return res.status(404).json({ message: 'User does not exist' });
+     }
+
+     const passwordMatch = await bcrypt.compare(password, user.password);
+     if (!passwordMatch) {
+         return res.status(401).json({ message: 'Incorrect password' });
+     }
+
+     res.status(200).json({ message: 'User logged in successfully' });
      } catch(error){
            console.log(error);
            res.status(500).json({message:'internal error'})
