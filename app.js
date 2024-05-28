@@ -6,11 +6,13 @@ const app = express();
 app.use(cors());
 app.use(bodyparser.json())
 
-const singUpModel = require('./models/singupmodel')
-const singUpcontroller = require('./controllers/singupControl')
+const signUpModel = require('./models/singupmodel')
+const userRoutes = require('./routes/userRoute');
 
-app.use('/user/singup',singUpcontroller.postSingUpData)
-singUpModel.sync()
+
+
+app.use('/user',userRoutes);
+signUpModel.sync()
 
 app.use(cors)
 app.listen(2000,()=>{

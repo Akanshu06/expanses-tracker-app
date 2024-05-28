@@ -1,16 +1,26 @@
 const sequelize = require('../database/sequelize');
 const { DataTypes } = require('sequelize');
 
-const singupData = sequelize.define('singupData', { 
+const signupData = sequelize.define('signupData', { 
+    id:{
+        type:DataTypes.INTEGER,
+        autoIncrement: true,
+        allowNull:false,
+        primaryKey: true
+    },
     name: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
     },
     email: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
+        primaryKey:true,
+        unique:true
     },
     password: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
     }
 });
 
-module.exports = singupData;
+module.exports = signupData;
