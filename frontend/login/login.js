@@ -9,7 +9,7 @@ form.addEventListener('submit',(event)=>{
 axios.post(`http://localhost:2000/user/login`,loginData).then((response)=>{
       console.log(response);
             if(response.status ===200){
-                document.body.innerHTML=`<div style='color:red'><h1>logedin success</h1></div>`
+                window.location.href="../expanses/expanse.html"
             }else{
                 throw new Error(response.data.message)
             }
