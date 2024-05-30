@@ -1,5 +1,6 @@
 const signupModel = require('../models/singupmodel');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 module.exports.postsignUpData = async (req, res) => {
     try {
@@ -12,7 +13,7 @@ module.exports.postsignUpData = async (req, res) => {
         // Create signup data
         const saltRounds =10;
         bcrypt.hash(password,saltRounds,(err,hash)=>{
-              signupModel.create({name,email,password:hash});
+              const user=signupModel.create({name,email,password:hash});
               res.status(201).json({message:'new user signup successfully'})
         })
 
@@ -22,6 +23,8 @@ module.exports.postsignUpData = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+
 
 function stringValidate(string) {
     return string ===undefined || string.length === 0;

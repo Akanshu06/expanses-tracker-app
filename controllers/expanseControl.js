@@ -1,6 +1,7 @@
+
 const table  = require('../models/expansemodel')
 module.exports.getExpanse=(req,res)=>{
-  table.findAll().then((result)=>{
+  table.findAll({where:{signupDatumId:req.user.id}}).then((result)=>{
     //console.log(result);
     res.status(200).json({expanses:result})
   })

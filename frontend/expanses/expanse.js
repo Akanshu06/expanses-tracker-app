@@ -2,12 +2,7 @@ const form = document.querySelector('form');
 const expanseList = document.getElementById('expanseList');
 
 // Define displayAllExpanses function outside event listener
-function displayAllExpanses(expanses) {
-    const li = document.createElement('li');
-    li.innerHTML = `${expanses.amount}-${expanses.description}-${expanses.category}
-    <button onClick="deleteFunction(${expanses.id})">Delete Expanse</button>`;
-    expanseList.appendChild(li);
-}
+
 
 form.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -34,9 +29,10 @@ form.addEventListener('submit', async (event) => {
 // Delete expense function
 window.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await axios.get(`http://localhost:2000/expanses/getExpanse`);
-        for (let i = 0; i < response.data.expanses.length; i++) {
-            displayAllExpanses(response.data.expanses[i]); // Call displayAllExpanses here
+        const token= localStorage.getItem('token');
+        const user = await axios.get(`http://localhost:2000/expanses/getExpanse`,{headers:{authorization:token}});
+        for (let i = 0; i < user.data.expanses.length; i++) {
+            displayAllExpanses(user.data.expanses[i]); // Call displayAllExpanses here
         }
     } catch (error) {
         console.error(error);
