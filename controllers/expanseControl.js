@@ -7,19 +7,26 @@ module.exports.getExpanse=(req,res)=>{
   })
 }
 module.exports.postExpanse=async(req,res)=>{
-   const amount=req.body.amount
+   try {
+      const amount=req.body.amount
    const description=req.body.description
    const category = req.body.category
-   if(isValid(amount)||isValid()||isValid(category)){
+   if(isValid(amount)||isValid(description)||isValid(category)){
     res.status(400).json({success:false,message:'bad petameter'});
    }
    const allExpanse= await table.create({
     amount,
     description,
-    category
+    category,
+    signupDatumId:req.user.id
    })
    //console.log(allExpanse);
    res.status(200).json({ expenses: allExpanse });
+      
+   } catch (error) {
+      console.log(error);
+   }
+   
 }
 
 module.exports.deleteExpanse = (req,res)=>{
@@ -27,7 +34,7 @@ module.exports.deleteExpanse = (req,res)=>{
      if(!eId||eId.length===0){
         res.status(500).json({success:false,message:'id is on correct'})
      }
-     table.destroy({where :{id:eId}}).then((result)=>{
+     table.destroy({where :{id:eId,signupDatumId:req.user.id}}).then((result)=>{
          res.status(200).json({ message: 'Successfull' })
      })
 }

@@ -13,10 +13,12 @@ form.addEventListener('submit', async (event) => {
     };
 
     try {
-        const response = await axios.post('http://localhost:2000/expanses/addExpanse', expanses);
+        const token= localStorage.getItem('token');
+        const response = await axios.post('http://localhost:2000/expanses/addExpanse', expanses,{headers:{authorization:token}});
         console.log(response.data);
         if (response.status === 200) {
-            document.body.innerHTML = `<div style='color:red'><h1>One expense added</h1></div>`;
+           document.body.innerHTML = `<div style='color:red'><h1>One expense added</h1></div>`;
+           
         } else {
             throw new Error('Not found');
         }
@@ -65,7 +67,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 // Delete expense function
 async function deleteFunction(id) {
     try {
-        await axios.delete(`http://localhost:2000/expanses/deleteExpanse/${id}`);
+        const token= localStorage.getItem('token');
+        await axios.delete(`http://localhost:2000/expanses/deleteExpanse/${id}`,{headers:{authorization:token}});
     } catch (error) {
         throw new Error(error);
     }
