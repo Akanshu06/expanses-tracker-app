@@ -37,8 +37,8 @@
 </head>
 <body>
     <form >
-        <h2>Add Expanses</h2>
-        <input type="number" name="amount" placeholder="Choose expanseamount" required  >
+        <h2>Add expenses</h2>
+        <input type="number" name="amount" placeholder="Choose expenseamount" required  >
         <input type="text" name="description" placeholder="Choose Description" required  >
         <select name="category" id="category" placeholder="Choose a category">
             <option value="food">Food</option>
@@ -46,10 +46,14 @@
             <option value="adventure">Adventure</option>
             <option value="shoping">Shoping</option>
           </select>
-        <button type="submit">Add Expanse</button>
+        <button type="submit">Add expense</button>
         <a href="../signup/index.html">New-User-click here to signup</a>
       </form>
+      <p id="massage"></p>
+      <button type="button" id="premiumBtn">Buy Premium</button>
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       <div>
+        <h1>expenses</h1>
         <ul id="expanseList">
         </ul>
       </div>
@@ -57,7 +61,7 @@
       integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw==" 
       crossorigin="anonymous" 
       referrerpolicy="no-referrer"></script>
-      <script src="expanse.js"></script>
+      <script src="expense.js"></script>
     
 </body>
 </html>

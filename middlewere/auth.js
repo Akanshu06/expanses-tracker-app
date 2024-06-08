@@ -1,18 +1,19 @@
 const jwt=require('jsonwebtoken');
-const User = require('../models/singupmodel');
+const User = require('../models/usermodel');
 
 module.exports.authenticate = async(req,res,next)=>{
    try {
-    const token = req.header('authorization');
-    console.log();
-    const user=jwt.verify(token,'secretKey');
-    console.log('userId==>'+user.signupDatumId);
-    User.findByPk(user.signupDatumId).then(user=>{
-        req.user=user;
-        next();
-    })
+    const token = req.header('Authorization');
+    const decodedToken = jwt.verify(token, 'secretKey');
+    const user = await User.findByPk(decodedToken.userId);
+    if (!user) {
+        throw new Error('User not found');
+    }
+     req.user=user;
+     next();
+
    } catch (error) {
-    return res.status(400).json({success:false})
+    return res.status(400).json({success:false});
    }
    
 }

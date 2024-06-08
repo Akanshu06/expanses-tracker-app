@@ -3,20 +3,31 @@ const bodyparser = require('body-parser')
 const cors=require('cors')
 const app = express();
 const sequelize = require('./database/sequelize')
+require('dotenv').config()
 
 app.use(cors());
 app.use(bodyparser.json())
 
-const User = require('./models/singupmodel');
-const Expanses= require('./models/expansemodel')
+const Order= require('./models/premium');
+const User = require('./models/usermodel');
+const expenses= require('./models/expensemodel')
+
 const userRoutes = require('./routes/userRoute');
+const purchaseRuntes=require('./routes/purchase');
+const expenseRoutes= require('./routes/expensesRoute')
 
-User.hasMany(Expanses);
-Expanses.belongsTo(User);
+User.hasMany(expenses);
+expenses.belongsTo(User);
 
-app.use('/expanses',require('./routes/expansesRoute'))
+User.hasMany(Order);
+Order.belongsTo(User);
+
+app.use('/expenses',expenseRoutes)
 app.use('/user',userRoutes);
+app.use('/purchase',purchaseRuntes)
 app.use(cors());
+
+
 
 sequelize.sync()
     .then(() => {

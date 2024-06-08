@@ -1,7 +1,7 @@
 const sequelize = require('sequelize');
 const createdSequelize = require('../database/sequelize');
 
-const Table =createdSequelize.define('Expanses',{
+const Table =createdSequelize.define('expenses',{
     id:{
         type:sequelize.INTEGER,
         autoIncrement:true,

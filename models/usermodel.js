@@ -1,7 +1,8 @@
-const sequelize = require('../database/sequelize');
 const { DataTypes } = require('sequelize');
+const sequelize = require('../database/sequelize');
 
-const signupData = sequelize.define('signupData', { 
+
+const User = sequelize.define('user', { 
     id:{
         type:DataTypes.INTEGER,
         autoIncrement: true,
@@ -20,7 +21,8 @@ const signupData = sequelize.define('signupData', {
     password: {
         type: DataTypes.STRING,
         allowNull: false,
-    }
+    },
+    ispremiumuser:DataTypes.BOOLEAN
 });
 
-module.exports = signupData;
+module.exports = User;
