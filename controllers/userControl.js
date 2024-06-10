@@ -2,7 +2,7 @@ const User = require('../models/usermodel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-module.exports.postUser = async (req, res) => {
+ const signup = async (req, res) => {
     try {
         const {name,email,password}=req.body
         // Perform validation
@@ -23,7 +23,7 @@ module.exports.postUser = async (req, res) => {
 }
 
 //login
-module.exports.loginDetails=async (req,res)=>{
+ const loginDetails=async (req,res)=>{
     try{
     const email= req.body.email;
     const password = req.body.password;
@@ -40,18 +40,24 @@ module.exports.loginDetails=async (req,res)=>{
         return res.status(401).json({ message: 'Incorrect password' });
     }
 
-    res.status(200).json({ message: 'User logged in successfully' ,token:genrateToken(user.id)});
+    res.status(200).json({ message: 'User logged in successfully' ,token:genrateToken(user.id,user.name,user.ispremiumuser)});
     } catch(error){
           console.log(error);
           res.status(500).json({message:'internal error'})
     }
 }
 
-module.exports.genrateToken=(id)=>{
-   return jwt.sign({userId:id},'secretKey');
+const genrateToken=(id,name,ispremiumuser)=>{
+   return jwt.sign({userId:id,name:name,ispremiumuser},'secretKey');
 }
 
 //string validation
 function stringValidate(string) {
     return string ===undefined || string.length === 0;
+}
+
+module.exports={
+    signup,
+    loginDetails,
+    genrateToken
 }

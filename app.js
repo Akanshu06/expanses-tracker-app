@@ -14,7 +14,8 @@ const expenses= require('./models/expensemodel')
 
 const userRoutes = require('./routes/userRoute');
 const purchaseRuntes=require('./routes/purchase');
-const expenseRoutes= require('./routes/expensesRoute')
+const expenseRoutes= require('./routes/expensesRoute');
+const premiumFeatureRoutes=require('./routes/premiumRoute')
 
 User.hasMany(expenses);
 expenses.belongsTo(User);
@@ -25,6 +26,7 @@ Order.belongsTo(User);
 app.use('/expenses',expenseRoutes)
 app.use('/user',userRoutes);
 app.use('/purchase',purchaseRuntes)
+app.use('/premium',premiumFeatureRoutes)
 app.use(cors());
 
 
