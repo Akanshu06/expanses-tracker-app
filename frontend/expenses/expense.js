@@ -16,9 +16,8 @@ form.addEventListener('submit', async (event) => {
         //console.log(response.data);
         if (response.status === 200) {
             alert('One expense added in your esxpenses');
-            event.target.amount.value = '';
-            event.target.description.value = '';
-            event.target.category.value = '';
+           
+            window.location.href='./expense.html'
         } else {
             throw new Error('Not found');
         }
@@ -128,21 +127,21 @@ premiumBtn.onclick = async (event) => {
 }
 
 //showLeaderboard
-function showLeaderboard(){
+function showLeaderboard() {
     const button = document.createElement('input');
-    button.type='button';
-    button.value='Show leaderboard';
-    button.onclick=async()=>{
+    button.type = 'button';
+    button.value = 'Show leaderboard';
+    button.onclick = async () => {
         const token = localStorage.getItem('token');
-     const response=await   axios.get('http://localhost:2000/premium/premiumFeature',{headers:{Authorization:token}});
-       // console.log(response);
-        const leaderboard= document.getElementById('leaderboard');
-        leaderboard.innerHTML=`<h1>Leard Board</h1>`
+        const response = await axios.get('http://localhost:2000/premium/premiumFeature', { headers: { Authorization: token } });
+        // console.log(response);
+        const leaderboard = document.getElementById('leaderboard');
+        leaderboard.innerHTML = `<h1>Leard Board</h1>`
         response.data.forEach(userDetails => {
             console.log(userDetails);
-            leaderboard.innerHTML+=`<li>Name-${userDetails.name} Total Expense-${userDetails.Total_Cost}</li>`;
-        })    
-     
+            leaderboard.innerHTML += `<li>Name-${userDetails.name} Total Expense-${userDetails.total}</li>`;
+        })
+
     }
     document.getElementById('message').appendChild(button);
 }

@@ -22,7 +22,11 @@ const User = sequelize.define('user', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    ispremiumuser:DataTypes.BOOLEAN
+    ispremiumuser:DataTypes.BOOLEAN,
+    total: {
+        type: DataTypes.INTEGER,
+        defaultValue:0
+      },
 });
 
 module.exports = User;
