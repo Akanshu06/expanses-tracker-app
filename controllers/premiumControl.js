@@ -4,30 +4,44 @@ const Users= require('../models/usermodel');
 
 const getUserLeaderBoard=async(req,res)=>{
     try {
-        const users=await Users.findAll();
-        const expenses=await Expenses.findAll();
-        const TotalExpense={}
-    expenses.forEach((expense)=>{
-        //console.log(expense)
-        if(TotalExpense[expense.userId]){
-
-            TotalExpense[expense.userId]=TotalExpense[expense.userId]+expense.amount;
-            //console.log(`ex-${expense.userId}`)
-        }
-        else{
-            TotalExpense[expense.userId]=expense.amount;
-        }
+        const Leaderboard = await Users.findAll({
+      attributes: [
+        "id",
+        "name",
+        [sequelize.fn("sum", sequelize.col("expenses.money")), "Total_Cost"],
+      ],
+      include: [
+        {
+          model: Expenses,
+          attributes: [],
+        },
+      ],
+      group: ["user.id"],
+      order: [["Total_Cost", "DESC"]],
+      attributes: [ "name","total"],
+      order: [["total", "DESC"]],
     });
-    var Leaderboard=[];
-    users.forEach((user)=>{
-        //console.log(`us-${TotalExpense[user.id]}`)
-        Leaderboard.push({name:user.name,Total_Cost:TotalExpense[user.id]||0})
-    })
-    Leaderboard.sort((a,b)=>{
-        a.Total_Cost-b.Total_Cost
-    })
-    res.status(200).json(Leaderboard)
-        
+
+    // const Leaderboard = await User.findAll({
+    //   attributes: [
+    //     "id",
+    //     "name",
+    //     [sequelize.fn("sum", sequelize.col("expenses.money")), "totalCost"],
+    //   ],
+    //   include: [
+    //     {
+    //       model: Expense,
+    //       attributes: [],
+    //     },
+    //   ],
+    //   group: ["user.id"],
+    //   order: [["totalCost", "DESC"]],
+    // });
+    console.log(Leaderboard);
+    //console.log(expenses)
+
+    res.status(200).json(Leaderboard);
+
     } catch (error) {
         console.log(error);
     }
