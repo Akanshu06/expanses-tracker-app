@@ -12,10 +12,12 @@ const Order = require('./models/premium');
 const User = require('./models/usermodel');
 const expenses = require('./models/expensemodel')
 
+
 const userRoutes = require('./routes/userRoute');
 const purchaseRuntes = require('./routes/purchase');
 const expenseRoutes = require('./routes/expensesRoute');
-const premiumFeatureRoutes = require('./routes/premiumRoute')
+const premiumFeatureRoutes = require('./routes/premiumRoute');
+const passwordRoutes=require('./routes/passwordRoute');
 
 User.hasMany(expenses);
 expenses.belongsTo(User);
@@ -27,6 +29,8 @@ app.use('/expenses', expenseRoutes)
 app.use('/user', userRoutes);
 app.use('/purchase', purchaseRuntes)
 app.use('/premium', premiumFeatureRoutes)
+app.use('/password',)
+
 app.use(cors());
 
 
