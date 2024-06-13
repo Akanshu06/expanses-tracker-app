@@ -3,7 +3,7 @@ const form=document.querySelector('form');
 form.addEventListener('submit',(e)=>{
     e.preventDefault()
     const token = localStorage.getItem("token")
-    const mail =document.getElementById("email").value;
+    const mail =e.target.email.value;
     const user={
         mail:mail
     }
@@ -11,6 +11,6 @@ form.addEventListener('submit',(e)=>{
         headers:{Authorisation:token}
     }).then((response)=>{
         console.log(response);
-        alert("Email sent successfully")
+        document.body.innerHTML += '<div style="color:red;">Mail Successfuly sent <div>'
     })
 })
