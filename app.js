@@ -1,48 +1,58 @@
 const express = require('express');
-//const bodyparser = require('body-parser')
-const cors = require('cors')
+const cors = require('cors');
 const app = express();
-const sequelize = require('./database/sequelize')
-require('dotenv').config()
+const sequelize = require('./database/sequelize');
+require('dotenv').config();
 
 app.use(cors());
-app.use(express.json())
+app.use(express.json());
 
+// Import Sequelize models
 const Order = require('./models/premium');
-const User = require('./models/usermodel');
-const expenses = require('./models/expensemodel');
-const forgetPasswordRequest= require('./models/password');
+const User = require('./models/usermodel') ;
+const Expense = require('./models/expensemodel');
+const FileUrl = require('./models/url');
+const ForgetPasswordRequest = require('./models/password');
 
 
-const userRoutes = require('./routes/userRoute');
-const purchaseRuntes = require('./routes/purchase');
-const expenseRoutes = require('./routes/expensesRoute');
-const premiumFeatureRoutes = require('./routes/premiumRoute');
-const passwordRoutes=require('./routes/passwordRoute');
 
-User.hasMany(expenses);
-expenses.belongsTo(User);
+// Define associations
+User.hasMany(Expense);
+Expense.belongsTo(User);
 
 User.hasMany(Order);
 Order.belongsTo(User);
 
-User.hasMany(forgetPasswordRequest);
-forgetPasswordRequest.belongsTo(User);
+User.hasMany(ForgetPasswordRequest);
+ForgetPasswordRequest.belongsTo(User);
 
-app.use('/expenses', expenseRoutes)
+User.hasMany(FileUrl);
+FileUrl.belongsTo(User);
+
+
+
+// Import routes
+const userRoutes = require('./routes/userRoute');
+const purchaseRoutes = require('./routes/purchase');
+const expenseRoutes = require('./routes/expensesRoute');
+const premiumFeatureRoutes = require('./routes/premiumRoute');
+const passwordRoutes = require('./routes/passwordRoute');
+
+// Use routes
+app.use('/expenses', expenseRoutes);
 app.use('/user', userRoutes);
-app.use('/purchase', purchaseRuntes)
-app.use('/premium', premiumFeatureRoutes)
-app.use('/password',passwordRoutes)
-
-app.use(cors());
+app.use('/purchase', purchaseRoutes);
+app.use('/premium', premiumFeatureRoutes);
+app.use('/password', passwordRoutes);
 
 
-
+// Start server
 sequelize.sync()
-    .then(() => {
-        app.listen(2000);
-    })
-    .catch(err => {
-        console.log(err);
-    })
+  .then(() => {
+    app.listen(2000, () => {
+      console.log('Server is running on port 2000');
+    });
+  })
+  .catch(err => {
+    console.error('Unable to start server:', err);
+  });

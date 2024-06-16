@@ -1,10 +1,10 @@
 const form = document.querySelector('form');
-const expanseList = document.getElementById('expanseList');
-// Define displayAllExpanses function outside event listener
+const expenseList = document.getElementById('expenseList');
+// Define displayAllexpenses function outside event listener
 form.addEventListener('submit', async (event) => {
     event.preventDefault();
     try {
-        const expanses = {
+        const expenses = {
             amount: event.target.amount.value,
             description: event.target.description.value,
             category: event.target.category.value
@@ -12,7 +12,7 @@ form.addEventListener('submit', async (event) => {
 
 
         const token = localStorage.getItem('token');
-        const response = await axios.post('http://localhost:2000/expenses/addexpense', expanses, { headers: { authorization: token } });
+        const response = await axios.post('http://localhost:2000/expenses/addexpense', expenses, { headers: { authorization: token } });
         //console.log(response.data);
         if (response.status === 200) {
             alert('One expense added in your esxpenses');
@@ -41,7 +41,6 @@ function parseJwt(token) {
     return JSON.parse(jsonPayload);
 }
 
-// Delete expense function
 window.addEventListener('DOMContentLoaded', async () => {
     try {
         const token = localStorage.getItem('token')
@@ -53,33 +52,33 @@ window.addEventListener('DOMContentLoaded', async () => {
             showLeaderboard()
         }
         const user = await axios.get(`http://localhost:2000/expenses/getExpense`, { headers: { Authorization: token } });
-        for (let i = 0; i < user.data.expanses.length; i++) {
-            displayAllExpanses(user.data.expanses[i]); // Call displayAllExpanses here
+        for (let i = 0; i < user.data.expenses.length; i++) {
+            displayAllexpenses(user.data.expenses[i]); 
         }
     } catch (error) {
         console.error(error);
     }
-    function displayAllExpanses(expanses) {
+    function displayAllexpenses(expenses) {
         const li = document.createElement('li');
-        li.innerHTML = `${expanses.amount}-${expanses.description}-${expanses.category}`;
+        li.innerHTML = `${expenses.amount}-${expenses.description}-${expenses.category}`;
         const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = 'Delete Expanse';
+        deleteBtn.textContent = 'Delete expense';
         deleteBtn.type = 'button'; // Set the type to button
-        deleteBtn.dataset.id = expanses.id; // Use dataset to store id
+        deleteBtn.dataset.id = expenses.id; // Use dataset to store id
         // Add event listener to delete button
         deleteBtn.addEventListener('click', async () => {
             try {
-                await deleteFunction(expanses.id);
-                expanseList.removeChild(li); // Remove the list item
+                await deleteFunction(expenses.id);
+                expenseList.removeChild(li); // Remove the list item
             } catch (error) {
                 console.error(error);
             }
         });
         li.appendChild(deleteBtn); // Append delete button to list item
-        expanseList.appendChild(li); // Append list item to list
+        expenseList.appendChild(li); // Append list item to list
     }
 });
-// Delete expense function
+
 async function deleteFunction(id) {
     try {
         const token = localStorage.getItem('token');
@@ -89,7 +88,7 @@ async function deleteFunction(id) {
         throw new Error(error);
     }
 }
-//primium
+
 const premiumBtn = document.getElementById('premiumBtn');
 premiumBtn.onclick = async (event) => {
     const token = localStorage.getItem('token');
@@ -126,7 +125,6 @@ premiumBtn.onclick = async (event) => {
 
 }
 
-//showLeaderboard
 function showLeaderboard() {
     const button = document.createElement('input');
     button.type = 'button';
@@ -145,3 +143,48 @@ function showLeaderboard() {
     }
     document.getElementById('message').appendChild(button);
 }
+
+async function download(){
+    const token=localStorage.getItem('token');
+    try {
+        
+    const response=await axios.get('http://localhost:2000/user/download',{headers:{Authorization:token}});
+    //console.log('===>',response);
+        if(response.status === 201){
+            //the bcakend is essentially sending a download link
+            //  which if we open in browser, the file would download
+            var a = document.createElement("a");
+            a.href = response.data.fileURL;
+            a.download = 'myexpense.csv';
+            a.click();
+        } else {
+            throw new Error(response.data.message)
+        }
+        
+    } catch (error) {
+        console.log("not geting respons",error);
+    }
+
+    const URLs=await axios.get('http://localhost:2000/user/geturl',{headers:{Authorization:token}});
+    console.log(URLs);
+    if(URLs){
+        for (let i = 0; i < URLs.data.url.length; i++) {
+            console.log(URLs.data.url);
+           showUrl(URLs.data.url[i]);
+        }
+    }else{
+        console.log('sumthing wrong');
+    }
+    
+}
+
+function showUrl(Links){
+    const parent=document.getElementById('url_list');
+   // console.log(parent)
+  const child=document.createElement('li');
+  const CloseBtn=document.createElement('button');
+  CloseBtn.innerText="Close";
+  child.textContent=`Already Downloaded -${Links.URL}`;
+  parent.appendChild(child);
+  parent.appendChild(CloseBtn)
+  }
