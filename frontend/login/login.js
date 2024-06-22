@@ -23,6 +23,7 @@ form.addEventListener('submit', (event) => {
 const forgetBtn= document.getElementById('Forget-password');
 forgetBtn.addEventListener('click',(e)=>{
     e.preventDefault();
-
     window.location.href='./forgotPassword/forget.html';
 });
+
+

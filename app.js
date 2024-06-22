@@ -34,12 +34,11 @@ FileUrl.belongsTo(User);
 // Import routes
 const userRoutes = require('./routes/userRoute');
 const purchaseRoutes = require('./routes/purchase');
-const expenseRoutes = require('./routes/expensesRoute');
 const premiumFeatureRoutes = require('./routes/premiumRoute');
 const passwordRoutes = require('./routes/passwordRoute');
 
 // Use routes
-app.use('/expenses', expenseRoutes);
+
 app.use('/user', userRoutes);
 app.use('/purchase', purchaseRoutes);
 app.use('/premium', premiumFeatureRoutes);

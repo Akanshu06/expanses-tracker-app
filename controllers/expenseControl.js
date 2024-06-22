@@ -19,7 +19,7 @@ const getURL =async(req,res)=>{
 const download = async (req, res) => {
    try {
       
-      const expenses = await  await Expense.findAll({ where: { userId: req.user.id } });
+      const expenses = await  await Expense.findAll({ where: { UserId: req.user.id } });
       const stringifyExpanses=JSON.stringify(expenses);
       const userId= req.user.id;
       const fileName=`Expense${userId}/${new Date()}.txt`;
@@ -37,17 +37,43 @@ const download = async (req, res) => {
    }
 }
 
- const getexpense = async (req, res) => {
+const getexpense = async (req, res) => {
+   const page = parseInt(req.query.page) || 1;
+   const ITEMS_PER_PAGE = 2; 
+   let totalItems, totalPages;
+ 
    try {
-      console.log('getexpanseuse==>'+req.user);
-      const result = await Expense.findAll({ where: { userId: req.user.id } })
-   
-      res.status(200).json({ expenses: result })
-   } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+     totalItems = await Expense.count();
+ 
+     totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+ 
+     const expenses = await Expense.findAll({
+      where:{UserId:req.user.id},
+       offset: (page - 1) * ITEMS_PER_PAGE,
+       limit: ITEMS_PER_PAGE,
+     });
+ 
+     res.status(200).json({
+       expenses: expenses,
+       currentPage: page,
+       hasPreviousPage: page > 1,
+       hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+       nextPage: page + 1,
+       previousPage: page - 1,
+       lastPage: totalPages,
+     });
+   } catch (err) {
+     console.error("Error fetching expenses:", err);
+     res.status(500).json({ error: "Failed to fetch expenses" });
    }
-}
+};
+
+module.exports = {
+  getexpense
+};
+
+ 
+
 
 const postexpense = async (req, res) => {
    let t;
@@ -58,7 +84,8 @@ const postexpense = async (req, res) => {
          res.status(400).json({ success: false, message: 'Bad parameter' });
          return;
       }
-      const allExpense = await Expense.create({ amount, description, category, userId: req.user.id }, { transaction: t });
+     // console.log(req.user.id);
+      const allExpense = await Expense.create({ amount, description, category, UserId: req.user.id }, { transaction: t });
       const totalExpense = Number(req.user.total) + Number(amount);
       await User.update({ total: totalExpense }, { where: { id: req.user.id } }, { transaction: t })
       await t.commit();
@@ -80,13 +107,13 @@ const deleteexpense = async (req, res) => {
          return;
       }
       
-      const expenseToDelete = await Expense.findOne({ where: { id: eId, userId: req.user.id } });
+      const expenseToDelete = await Expense.findOne({ where: { id: eId, UserId: req.user.id } });
       if (!expenseToDelete) {
          res.status(404).json({ success: false, message: 'Expense not found' });
          return;
       }
 
-      const deleteRow = await Expense.destroy({ where: { id: eId, userId: req.user.id } }, { transaction: t })
+      const deleteRow = await Expense.destroy({ where: { id: eId, UserId: req.user.id } }, { transaction: t })
       if (deleteRow === 0) {
          res.status(404).json({ success: false, message: 'Expense not found' });
          return;

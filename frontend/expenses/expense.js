@@ -12,12 +12,12 @@ form.addEventListener('submit', async (event) => {
 
 
         const token = localStorage.getItem('token');
-        const response = await axios.post('http://localhost:2000/expenses/addexpense', expenses, { headers: { authorization: token } });
+        const response = await axios.post('http://localhost:2000/user/addexpense', expenses, { headers: { authorization: token } });
         //console.log(response.data);
         if (response.status === 200) {
             alert('One expense added in your esxpenses');
-           
-            window.location.href='./expense.html'
+
+            window.location.href = './expense.html'
         } else {
             throw new Error('Not found');
         }
@@ -40,49 +40,102 @@ function parseJwt(token) {
 
     return JSON.parse(jsonPayload);
 }
+const token = localStorage.getItem('token');
+window.addEventListener('DOMContentLoaded', () => {
+    let currentPage = 1; // Initialize currentPage variable
 
-window.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const token = localStorage.getItem('token')
-        const decodeToken = parseJwt(token)
-        //console.log(decodeToken)
-        const ispremiumuser = decodeToken.ispremiumuser
-        if (ispremiumuser) {
-            showPremiumuserMessage()
-            showLeaderboard()
-        }
-        const user = await axios.get(`http://localhost:2000/expenses/getExpense`, { headers: { Authorization: token } });
-        for (let i = 0; i < user.data.expenses.length; i++) {
-            displayAllexpenses(user.data.expenses[i]); 
-        }
-    } catch (error) {
-        console.error(error);
+    // Assuming token and parseJwt function are defined elsewhere
+    const token = localStorage.getItem('token');
+    const decodeToken = parseJwt(token);
+    const isPremiumUser = decodeToken.ispremiumuser;
+
+    if (isPremiumUser) {
+        showPremiumUserMessage();
+        showLeaderboard();
     }
-    function displayAllexpenses(expenses) {
+
+    // Initial load of expenses
+    axios.get(`http://localhost:2000/user/getexpense?page=${currentPage}`, { headers: { Authorization: token } })
+        .then((response) => {
+            displayAllExpenses(response.data.expenses); // Assuming displayAllExpenses handles all expenses
+            showPagination(response.data); // Show pagination buttons based on response data
+        })
+        .catch((error) => {
+            console.error('Error fetching expense data:', error);
+        });
+
+    function showPagination({ currentPage, hasNextPage, nextPage, hasPreviousPage, previousPage }) {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+
+        if (hasPreviousPage) {
+            const btnPrevious = document.createElement('button');
+            btnPrevious.textContent = 'Previous';
+            btnPrevious.addEventListener('click', () => getProducts(previousPage));
+            pagination.appendChild(btnPrevious);
+        }
+
+        const btnCurrent = document.createElement('button');
+        btnCurrent.textContent = currentPage;
+        btnCurrent.addEventListener('click', () => getProducts(currentPage));
+        pagination.appendChild(btnCurrent);
+
+        if (hasNextPage) {
+            const btnNext = document.createElement('button');
+            btnNext.textContent = 'Next';
+            btnNext.addEventListener('click', () => getProducts(nextPage));
+            pagination.appendChild(btnNext);
+        }
+    }
+
+    function getProducts(page) {
+        axios.get(`http://localhost:2000/user/getexpense?page=${page}`, { headers: { Authorization: token } })
+            .then((response) => {
+                displayAllExpenses(response.data.expenses); // Assuming displayAllExpenses handles all expenses
+                showPagination(response.data); // Update pagination based on new response data
+            })
+            .catch((error) => {
+                console.error('Error fetching expense data:', error);
+            });
+    }
+});
+
+
+
+function displayAllExpenses(expenses) {
+    const expenseList = document.getElementById('expenseList'); // Assuming you have a UL element with id 'expense-list'
+
+    // Clear existing list items before appending new ones
+    expenseList.innerHTML = '';
+
+    expenses.forEach(expense => {
         const li = document.createElement('li');
-        li.innerHTML = `${expenses.amount}-${expenses.description}-${expenses.category}`;
+        li.innerHTML = `${expense.amount} - ${expense.description} - ${expense.category}`;
+
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = 'Delete expense';
         deleteBtn.type = 'button'; // Set the type to button
-        deleteBtn.dataset.id = expenses.id; // Use dataset to store id
+        deleteBtn.dataset.id = expense.id; // Set dataset id to expense id
+
         // Add event listener to delete button
         deleteBtn.addEventListener('click', async () => {
             try {
-                await deleteFunction(expenses.id);
-                expenseList.removeChild(li); // Remove the list item
+                await deleteFunction(expense.id); // Assuming deleteFunction is defined elsewhere
+                expenseList.removeChild(li); // Remove the list item from the UL
             } catch (error) {
                 console.error(error);
             }
         });
+
         li.appendChild(deleteBtn); // Append delete button to list item
-        expenseList.appendChild(li); // Append list item to list
-    }
-});
+        expenseList.appendChild(li); // Append list item to UL
+    });
+}
 
 async function deleteFunction(id) {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.delete(`http://localhost:2000/expenses/deleteexpense/${id}`, { headers: { Authorization: token } });
+        const response = await axios.delete(`http://localhost:2000/user/deleteexpense/${id}`, { headers: { Authorization: token } });
 
     } catch (error) {
         throw new Error(error);
@@ -102,7 +155,7 @@ premiumBtn.onclick = async (event) => {
                 const res = await axios.post('http://localhost:2000/purchase/purchasetransactionstatus', {
                     order_id: options.order_id,
                     payment_id: response.razorpay_payment_id,
-                }, { headers: { "Authorization": token } })
+                }, { headers: { "Authorization": token } });
 
                 console.log(res)
                 alert('You are a Premium User Now')
@@ -136,7 +189,7 @@ function showLeaderboard() {
         const leaderboard = document.getElementById('leaderboard');
         leaderboard.innerHTML = `<h1>Leard Board</h1>`
         response.data.forEach(userDetails => {
-           // console.log(userDetails);
+            // console.log(userDetails);
             leaderboard.innerHTML += `<li>Name-${userDetails.name} Total Expense-${userDetails.total}</li>`;
         })
 
@@ -144,13 +197,13 @@ function showLeaderboard() {
     document.getElementById('message').appendChild(button);
 }
 
-async function download(){
-    const token=localStorage.getItem('token');
+async function download() {
+    const token = localStorage.getItem('token');
     try {
-        
-    const response=await axios.get('http://localhost:2000/user/download',{headers:{Authorization:token}});
-    //console.log('===>',response);
-        if(response.status === 201){
+
+        const response = await axios.get('http://localhost:2000/user/download', { headers: { Authorization: token } });
+        //console.log('===>',response);
+        if (response.status === 201) {
             //the bcakend is essentially sending a download link
             //  which if we open in browser, the file would download
             var a = document.createElement("a");
@@ -160,31 +213,33 @@ async function download(){
         } else {
             throw new Error(response.data.message)
         }
-        
+
     } catch (error) {
-        console.log("not geting respons",error);
+        console.log("not geting respons", error);
     }
 
-    const URLs=await axios.get('http://localhost:2000/user/geturl',{headers:{Authorization:token}});
+    const URLs = await axios.get('http://localhost:2000/user/geturl', { headers: { Authorization: token } });
     console.log(URLs);
-    if(URLs){
+    if (URLs) {
         for (let i = 0; i < URLs.data.url.length; i++) {
             console.log(URLs.data.url);
-           showUrl(URLs.data.url[i]);
+            showUrl(URLs.data.url[i]);
         }
-    }else{
+    } else {
         console.log('sumthing wrong');
     }
-    
+
 }
 
-function showUrl(Links){
-    const parent=document.getElementById('url_list');
-   // console.log(parent)
-  const child=document.createElement('li');
-  const CloseBtn=document.createElement('button');
-  CloseBtn.innerText="Close";
-  child.textContent=`Already Downloaded -${Links.URL}`;
-  parent.appendChild(child);
-  parent.appendChild(CloseBtn)
-  }
+
+
+function showUrl(Links) {
+    const parent = document.getElementById('url_list');
+    // console.log(parent)
+    const child = document.createElement('li');
+    const CloseBtn = document.createElement('button');
+    CloseBtn.innerText = "Close";
+    child.textContent = `Already Downloaded -${Links.URL}`;
+    parent.appendChild(child);
+    parent.appendChild(CloseBtn)
+}
