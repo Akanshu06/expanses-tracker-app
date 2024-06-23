@@ -25,14 +25,14 @@ module.exports.forgetPassword = async (req, res) => {
       const transporter = nodemailer.createTransport({
          service: 'gmail',
          auth: {
-            user: 'akanshu3264@gmail.com',
+            user: process.env.GMAIL,
             pass: process.env.GMAIL_PASSWORD,
          },
       });
 
       // Send email using Nodemailer transporter
       const info = await transporter.sendMail({
-         from: 'akanshu3264@gmail.com',
+         from: process.env.GMAIL,
          to: email,
          subject: 'Reset Your Password',
          text: 'Follow the link to reset your password',
@@ -79,7 +79,7 @@ exports.updatepassword = async (req, res) => {
       const newpassword  = req.query.newpassword
 
       
-      console.log('newpassword1==>'+newpassword);
+     // console.log('newpassword1==>'+newpassword);
       const id = req.params.id;
       const forgetPasswordRequest = await ForgetPasswordRequest.findOne({where:{ id: id }});
       console.log(forgetPasswordRequest.userId);
