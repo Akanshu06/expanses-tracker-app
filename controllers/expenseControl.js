@@ -9,7 +9,7 @@ require('dotenv').config();
 const getURL =async(req,res)=>{
    const url = await links.findAll({where:{userId:req.user.id}});
    if(url){
-      console.log('==url==>'+url);
+      //console.log('==url==>'+url);
      return res.status(201).json({url});
    }else{
       throw new error('url not found')
