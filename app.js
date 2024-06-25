@@ -5,8 +5,9 @@ const app = express();
 const path= require('path')
 const morgan=require('morgan');
 const fs= require('fs')
-const sequelize = require('./database/sequelize');
 require('dotenv').config();
+const sequelize = require('./database/sequelize');
+
 
 const accessLogPath = path.join(__dirname, 'access.log');
 const accessLogStream = fs.createWriteStream(accessLogPath, { flags: 'a' });
