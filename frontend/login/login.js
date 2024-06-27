@@ -10,7 +10,7 @@ form.addEventListener('submit', (event) => {
 
     axios.post(`http://localhost:2000/user/login`, loginData).then((response) => {
         localStorage.setItem('token', response.data.token)
-        console.log(response.data);
+       // console.log(response.data);
         window.location.href = '../expenses/expense.html'
     }).catch((err) => {
         console.log(JSON.stringify(err))
