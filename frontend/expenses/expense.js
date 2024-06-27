@@ -12,7 +12,7 @@ form.addEventListener('submit', async (event) => {
 
 
         const token = localStorage.getItem('token');
-        const response = await axios.post('http://52.66.109.123:2000//user/addexpense', expenses, { headers: { authorization: token } });
+        const response = await axios.post('http://52.66.109.123:2000/user/addexpense', expenses, { headers: { authorization: token } });
         //console.log(response.data);
         if (response.status === 200) {
             alert('One expense added in your esxpenses');
@@ -50,12 +50,12 @@ window.addEventListener('DOMContentLoaded', () => {
     const isPremiumUser = decodeToken.ispremiumuser;
 
     if (isPremiumUser) {
-        showPremiumUserMessage();
+        showPremiumuserMessage();
         showLeaderboard();
     }
 
     // Initial load of expenses
-    axios.get(`http://52.66.109.123:2000//user/getexpense?page=${currentPage}`, { headers: { Authorization: token } })
+    axios.get(`http://52.66.109.123:2000/user/getexpense?page=${currentPage}`, { headers: { Authorization: token } })
         .then((response) => {
             displayAllExpenses(response.data.expenses); // Assuming displayAllExpenses handles all expenses
             showPagination(response.data); // Show pagination buttons based on response data
@@ -89,7 +89,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function getProducts(page) {
-        axios.get(`http://52.66.109.123:2000//user/getexpense?page=${page}`, { headers: { Authorization: token } })
+        axios.get(`http://52.66.109.123:2000/user/getexpense?page=${page}`, { headers: { Authorization: token } })
             .then((response) => {
                 displayAllExpenses(response.data.expenses); // Assuming displayAllExpenses handles all expenses
                 showPagination(response.data); // Update pagination based on new response data
@@ -135,7 +135,7 @@ function displayAllExpenses(expenses) {
 async function deleteFunction(id) {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.delete(`http://52.66.109.123:2000//user/deleteexpense/${id}`, { headers: { Authorization: token } });
+        const response = await axios.delete(`http://52.66.109.123:2000/user/deleteexpense/${id}`, { headers: { Authorization: token } });
 
     } catch (error) {
         throw new Error(error);
@@ -145,14 +145,14 @@ async function deleteFunction(id) {
 const premiumBtn = document.getElementById('premiumBtn');
 premiumBtn.onclick = async (event) => {
     const token = localStorage.getItem('token');
-    const response = await axios.get('http://52.66.109.123:2000//purchase/premiummembership', { headers: { Authorization: token } })
+    const response = await axios.get('http://52.66.109.123:2000/purchase/premiummembership', { headers: { Authorization: token } })
     try {
         var options = {
             "key_id": response.data.key_id, // Enter the Key ID generated from the Dashboard
             "order_id": response.data.order.id,// For one time payment
 
             "handler": async function (response) {
-                const res = await axios.post('http://52.66.109.123:2000//purchase/purchasetransactionstatus', {
+                const res = await axios.post('http://52.66.109.123:2000/purchase/purchasetransactionstatus', {
                     order_id: options.order_id,
                     payment_id: response.razorpay_payment_id,
                 }, { headers: { "Authorization": token } });
@@ -184,7 +184,7 @@ function showLeaderboard() {
     button.value = 'Show leaderboard';
     button.onclick = async () => {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://52.66.109.123:2000//premium/premiumFeature', { headers: { Authorization: token } });
+        const response = await axios.get('http://52.66.109.123:2000/premium/premiumFeature', { headers: { Authorization: token } });
         // console.log(response);
         const leaderboard = document.getElementById('leaderboard');
         leaderboard.innerHTML = `<h1>Leard Board</h1>`
@@ -201,7 +201,7 @@ async function download() {
     const token = localStorage.getItem('token');
     try {
 
-        const response = await axios.get('http://52.66.109.123:2000//user/download', { headers: { Authorization: token } });
+        const response = await axios.get('http://52.66.109.123:2000/user/download', { headers: { Authorization: token } });
         //console.log('===>',response);
         if (response.status === 201) {
             //the bcakend is essentially sending a download link
@@ -218,7 +218,7 @@ async function download() {
         console.log("not geting respons", error);
     }
 
-    const URLs = await axios.get('http://52.66.109.123:2000//user/geturl', { headers: { Authorization: token } });
+    const URLs = await axios.get('http://52.66.109.123:2000/user/geturl', { headers: { Authorization: token } });
     console.log(URLs);
     if (URLs) {
         for (let i = 0; i < URLs.data.url.length; i++) {
@@ -230,8 +230,6 @@ async function download() {
     }
 
 }
-
-
 
 function showUrl(Links) {
     const parent = document.getElementById('url_list');
