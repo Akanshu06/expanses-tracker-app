@@ -45,19 +45,13 @@ const ForgetPasswordRequest = require('./models/password');
 // Define associations
 User.hasMany(Expense);
 Expense.belongsTo(User);
-
 User.hasMany(Order);
 Order.belongsTo(User);
-
 User.hasMany(ForgetPasswordRequest);
 ForgetPasswordRequest.belongsTo(User);
-
 User.hasMany(FileUrl);
 FileUrl.belongsTo(User);
 
-
-
-// Import routes
 const userRoutes = require('./routes/userRoute');
 const purchaseRoutes = require('./routes/purchase');
 const premiumFeatureRoutes = require('./routes/premiumRoute');
