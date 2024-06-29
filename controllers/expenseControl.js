@@ -68,13 +68,6 @@ const getexpense = async (req, res) => {
    }
 };
 
-module.exports = {
-  getexpense
-};
-
- 
-
-
 const postexpense = async (req, res) => {
    let t;
    try {
@@ -87,11 +80,11 @@ const postexpense = async (req, res) => {
      // console.log(req.user.id);
       const allExpense = await Expense.create({ amount, description, category, UserId: req.user.id }, { transaction: t });
       const totalExpense = Number(req.user.total) + Number(amount);
-      await User.update({ total: totalExpense }, { where: { id: req.user.id } }, { transaction: t })
+      await User.update({ total: totalExpense }, { where: { id: req.user.id } ,transaction: t} )
       await t.commit();
       res.status(200).json({ expenses: allExpense });
    } catch (error) {
-      if (t) await t.rollback();
+     if(t)  {await t.rollback();}
       console.error(error);
       res.status(500).json({ error: 'Internal Server Error' });
    }
