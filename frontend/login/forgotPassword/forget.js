@@ -7,7 +7,7 @@ form.addEventListener('submit',(e)=>{
     const user={
         mail:mail
     }
-    axios.post('http://52.66.109.123:2000//password/forget-password',user,{
+    axios.post('http://localhost:2000//password/forget-password',user,{
         headers:{Authorisation:token}
     }).then((response)=>{
         console.log(response);

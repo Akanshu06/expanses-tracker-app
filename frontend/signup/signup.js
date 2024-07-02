@@ -6,7 +6,7 @@ signUpForm.addEventListener('submit',(event)=>{
         email:event.target.email.value,
         password:event.target.password.value
     }
-    axios.post('http://52.66.109.123:2000/user/signup',signupDetails)
+    axios.post('http://localhost:2000/user/signup',signupDetails)
     .then((response)=>{
         if(response.status===201){
             document.body.innerHTML=` <a href="../login/login.html"> click here to login</a>`
