@@ -66,6 +66,7 @@ app.use('/premium', premiumFeatureRoutes);
 app.use('/password', passwordRoutes);
 
 app.use((req,res)=>{
+  console.log(req.url);
   res.sendFile(path.join(__dirname,`frontend/${req.url}`))
 })
 
