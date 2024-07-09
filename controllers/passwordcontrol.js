@@ -36,7 +36,7 @@ module.exports.forgetPassword = async (req, res) => {
          to: email,
          subject: 'Reset Your Password',
          text: 'Follow the link to reset your password',
-         html: `<a href="http://localhost:2000//password/reset_password/${id}">Reset password</a>`,
+         html: `<a href="http://3.109.184.246:2000//password/reset_password/${id}">Reset password</a>`,
       });
 
       console.log("Message sent: %s", info.messageId);
