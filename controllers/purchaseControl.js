@@ -50,7 +50,7 @@ module.exports.purchasetransactionstatus = async (req, res) => {
         await User.update({ isPremiumUser: true }, { where: { id: userId } });
 
         // Generate a new token with updated user information
-        const token = userController.generateToken(userId, undefined, true);
+        const token = userController.genrateToken(userId, undefined, true);
 
         // Send response
         return res.status(202).json({ success: true, message: 'Transaction Successful', token });

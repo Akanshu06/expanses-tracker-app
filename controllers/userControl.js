@@ -48,7 +48,7 @@ const loginDetails = async (req, res) => {
     }
 }
 
-const genrateToken = (id, name, ispremiumuser) => {
+ const genrateToken = (id, name, ispremiumuser) => {
     return jwt.sign({userId: id, name: name, ispremiumuser}, 'secretKey');
 }
 
