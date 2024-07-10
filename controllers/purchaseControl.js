@@ -1,6 +1,7 @@
 
+const { where } = require('sequelize');
 const Order=require('../models/premium');
-const user=require('../models/usermodel');
+const User=require('../models/usermodel');
 //const signup=require('../models/singupmodel');
 const userController=require('./userControl');
 require('dotenv').config();
@@ -36,7 +37,7 @@ module.exports.purchasetransactionstatus=async(req,res)=>{
         const { payment_id, order_id} = req.body;
         const order  = await Order.findOne({where : {orderid : order_id}}) //2
         const promise1 =  order.update({ paymentid: payment_id, status: 'SUCCESSFUL'}) 
-        const promise2 =  user.update({ isPremiumUser: true }) 
+        const promise2 =  User.update({ isPremiumUser: true },{where:{id:userId}}) 
 
         Promise.all([promise1, promise2]).then(()=> {
             return res.status(202).json({sucess: true, message: "Transaction Successful", token: userController.genrateToken(userId,undefined , true) });
