@@ -31,26 +31,31 @@ module.exports.purchasePremium=async(req,res)=>{
     }
 }
 
-module.exports.purchasetransactionstatus=async(req,res)=>{
+module.exports.purchasetransactionstatus = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const { payment_id, order_id} = req.body;
-        const order  = await Order.findOne({where : {orderid : order_id}}) //2
-        const promise1 =  order.update({ paymentid: payment_id, status: 'SUCCESSFUL'}) 
-        const promise2 =  User.update({ isPremiumUser: true },{where:{id:userId}}) 
+        const userId = req.user.id; 
+        const { payment_id, order_id } = req.body;
 
-        Promise.all([promise1, promise2]).then(()=> {
-            return res.status(202).json({sucess: true, message: "Transaction Successful", token: userController.genrateToken(userId,undefined , true) });
-        }).catch((error ) => {
-            throw new Error(error)
-        })
+        // Find the order by order_id
+        const order = await Order.findOne({ where: { orderid: order_id } });
 
-        
-                
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        // Update the order with payment_id and status
+        await order.update({ paymentid: payment_id, status: 'SUCCESSFUL' });
+
+        // Update the User to mark them as a premium user
+        await User.update({ isPremiumUser: true }, { where: { id: userId } });
+
+        // Generate a new token with updated user information
+        const token = userController.generateToken(userId, undefined, true);
+
+        // Send response
+        return res.status(202).json({ success: true, message: 'Transaction Successful', token });
     } catch (err) {
-        console.log(err);
-        res.status(403).json({ errpr: err, message: 'Sometghing went wrong' })
-
+        console.error(err);
+        return res.status(500).json({ error: err.message, message: 'Something went wrong' });
     }
-
-}
+};
