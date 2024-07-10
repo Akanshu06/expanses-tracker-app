@@ -1,10 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 //const helmet=require('helmet')
-const compression= require('compression')
+const compression= require('compression');
 const app = express();
 const path= require('path')
-//const morgan=require('morgan');
+
 const fs= require('fs')
 require('dotenv').config();
 const sequelize = require('./database/sequelize');
@@ -16,31 +16,12 @@ const accessLogStream = fs.createWriteStream(accessLogPath, { flags: 'a' });
 app.use(cors());
 app.use(compression());
 app.use(express.json());
-//app.use(helmet());
-// app.use(
-//   helmet.contentSecurityPolicy({
-//     directives: {
-//       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-//       'script-src':
-//        ["'self'", "https://cdnjs.cloudflare.com",
-//          "https://checkout.razorpay.com",
-//           "https://cdn.jsdelivr.net"],
-//           'default-src': ["'self'"],
-//       'frame-src': ["'self'", "https://api.razorpay.com"],
-//     },
-//   })
-// );
-//app.use(morgan('combined', { stream: accessLogStream }));
 
-
-// Import Sequelize models
 const Order = require('./models/premium');
 const User = require('./models/usermodel') ;
 const Expense = require('./models/expensemodel');
 const FileUrl = require('./models/url');
 const ForgetPasswordRequest = require('./models/password');
-
-
 
 // Define associations
 User.hasMany(Expense);
