@@ -40,16 +40,17 @@ const loginDetails = async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({ message: 'Incorrect password' });
         }
+        console.log(user);
 
-        res.status(200).json({ message: 'User logged in successfully', token: genrateToken(user.id, user.name, user.ispremiumuser) });
+        res.status(200).json({ message: 'User logged in successfully', token: genrateToken(user.id, user.name, user. isPremiumUser) });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'internal error' })
     }
 }
 
- const genrateToken = (id, name, ispremiumuser) => {
-    return jwt.sign({userId: id, name: name, ispremiumuser:ispremiumuser}, 'secretKey');
+ const genrateToken = (id, name, value) => {
+    return jwt.sign({userId: id, name: name, ispremiumuser:value}, 'secretKey');
 }
 
 //string validation
