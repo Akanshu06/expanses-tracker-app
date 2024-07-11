@@ -40,7 +40,7 @@ const loginDetails = async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({ message: 'Incorrect password' });
         }
-        console.log(user);
+    
 
         res.status(200).json({ message: 'User logged in successfully', token: genrateToken(user.id, user.name, user. isPremiumUser) });
     } catch (error) {

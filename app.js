@@ -47,11 +47,11 @@ app.use('/premium', premiumFeatureRoutes);
 app.use('/password', passwordRoutes);
 
 app.use((req,res)=>{
-  console.log(req.url);
+  //console.log(req.url);
   res.sendFile(path.join(__dirname,`frontend/${req.url}`))
 })
 
-const port = process.env.PORT || 2000;
+const port = process.env.PORT || 3000;
 // Start server
 sequelize.sync()
   .then(() => {
