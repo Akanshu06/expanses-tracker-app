@@ -1,55 +1,71 @@
 const User = require('../models/usermodel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const expenses = require('../models/expensemodel');
-const { where } = require('sequelize');
+// const expenses = require('../models/expensemodel');
+
 
 const signup = async (req, res) => {
     try {
-        const { name, email, password } = req.body
+        const { name, email, password } = req.body;
+
         // Perform validation
         if (stringValidate(name) || stringValidate(email) || stringValidate(password)) {
             return res.status(400).json({ message: 'Name, email, and password are required fields' });
         }
 
-        // Create signup data
+        // Check if the email already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Email already in use' });
+        }
+
+        // Hash the password
         const saltRounds = 10;
-        bcrypt.hash(password, saltRounds, (err, hash) => {
-            const user = User.create({ name, email, password: hash });
-            res.status(201).json({ message: 'new user signup successfully' })
-        })
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // Create and save the new user
+        const user = new User({ name, email, password: hashedPassword });
+        await user.save();
+
+        // Respond with success
+        res.status(201).json({ message: 'New user signed up successfully' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
 
 //login
 const loginDetails = async (req, res) => {
     try {
-        const email = req.body.email;
-        const password = req.body.password;
+        const { email, password } = req.body;
+
+        // Validate email and password
         if (stringValidate(email) || stringValidate(password)) {
-            res.status(400).json({ message: 'email or pass missing ' })
+            return res.status(400).json({ message: 'Email and password are required' });
         }
-        const user = await User.findOne({ where: { email } });
+        // Find the user by email
+        const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({ message: 'User does not exist' });
         }
+        // Compare provided password with stored hashed password
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
             return res.status(401).json({ message: 'Incorrect password' });
         }
-    
-
-        res.status(200).json({ message: 'User logged in successfully', token: genrateToken(user.id, user.name, user. isPremiumUser) });
+        // Generate a JWT token
+        const token = generateToken(user._id, user.name, user.isPremiumUser);
+        // Send success response with token
+        res.status(200).json({ message: 'User logged in successfully', token });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'internal error' })
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
 
- const genrateToken = (id, name, value) => {
+
+ const generateToken = (id, name, value) => {
     return jwt.sign({userId: id, name: name, ispremiumuser:value}, 'secretKey');
 }
 
@@ -61,5 +77,5 @@ function stringValidate(string) {
 module.exports = {
     signup,
     loginDetails,
-    genrateToken
+    generateToken
 }

@@ -1,15 +1,25 @@
-const sequelize = require('../database/sequelize');
-const Sequelize = require('sequelize');
+const mongoose = require('mongoose');
 
-const Order = sequelize.define('orders', { 
-    id:{
-        type:Sequelize.INTEGER,
-        autoIncrement: true,
-        allowNull:false,
-        primaryKey: true
-    },
-    paymentid: Sequelize.STRING,
-    orderid: Sequelize.STRING,
-    status: Sequelize.STRING
-})
-module.exports=Order;
+// Define the schema for the Order
+const orderSchema = new mongoose.Schema({
+  paymentid: {
+    type: String,
+    //required: true
+  },
+  orderid: {
+    type: String,
+    required: true
+  },
+  status: {
+    type: String,
+    required: true
+  }
+}, {
+  timestamps: true // Optional: adds createdAt and updatedAt fields
+});
+
+// Create the model from the schema
+const Order = mongoose.model('Order', orderSchema);
+
+// Export the model
+module.exports = Order;

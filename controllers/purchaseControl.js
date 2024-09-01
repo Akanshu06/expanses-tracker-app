@@ -1,56 +1,61 @@
-
-const { where } = require('sequelize');
-const Order=require('../models/premium');
-const User=require('../models/usermodel');
-//const signup=require('../models/singupmodel');
-const userController=require('./userControl');
+const Order = require('../models/premium'); // Make sure this is updated to use Mongoose
+const User = require('../models/usermodel'); // Make sure this is updated to use Mongoose
+const userController = require('./userControl');
 require('dotenv').config();
 const Razorpay = require('razorpay');
 
-module.exports.purchasePremium=async(req,res)=>{
+module.exports.purchasePremium = async (req, res) => {
     try {
-        var rzp = new Razorpay({
+        const rzp = new Razorpay({
             key_id: process.env.RAZORPAY_KEY_ID,
             key_secret: process.env.RAZORPAY_KEY_SECRET
-        })
+        });
         const amount = 2500;
-
-        rzp.orders.create({amount, currency: "INR"}, (err, order) => {
-            if(err) {
+        rzp.orders.create({ amount, currency: "INR" }, async (err, order) => {
+            if (err) {
                 console.log(err);
                 throw new Error(JSON.stringify(err));
             }
-            req.user.createOrder({ orderid: order.id, status: 'PENDING'}).then(() => {
-                return res.status(201).json({ order, key_id : rzp.key_id});
-
-            })
-        })
-    } catch(err){
-        console.log(err);
-        res.status(403).json({ message: 'Sometghing went wrong', error: err})
+            try {
+                // Assuming req.user is available and has an id
+                await Order.create({
+                    userId: req.user.id, // You need to ensure this field exists in your Order schema
+                    orderid: order.id,
+                    status: 'PENDING'
+                });
+                return res.status(201).json({ order, key_id: rzp.key_id });
+            } catch (err) {
+                console.error(err);
+                return res.status(500).json({ message: 'Database error', error: err });
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(403).json({ message: 'Something went wrong', error: err });
     }
-}
+};
 
 module.exports.purchasetransactionstatus = async (req, res) => {
     try {
-        const userId = req.user.id; 
+        const userId = req.user.id;
         const { payment_id, order_id } = req.body;
-
+console.log('pament',payment_id);
         // Find the order by order_id
-        const order = await Order.findOne({ where: { orderid: order_id } });
-
+        const order = await Order.findOne({ orderid: order_id });
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
 
         // Update the order with payment_id and status
-        await order.update({ paymentid: payment_id, status: 'SUCCESSFUL' });
+        order.paymentid = payment_id;
+        order.status = 'SUCCESSFUL';
+        await order.save();
 
         // Update the User to mark them as a premium user
-        await User.update({ isPremiumUser: true }, { where: { id: userId } });
+        await User.findByIdAndUpdate(userId, { isPremiumUser: true });
 
         // Generate a new token with updated user information
-        const token = userController.genrateToken(userId, undefined, true);
+        const token = userController.generateToken(userId, undefined, true);
 
         // Send response
         return res.status(202).json({ success: true, message: 'Transaction Successful', token });
