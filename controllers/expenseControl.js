@@ -6,11 +6,6 @@ require('dotenv').config();
 
 const getURL = async (req, res) => {
     try {
-        // Ensure user ID is available
-        if (!req.user || !req.user.id) {
-            return res.status(400).json({ error: 'User ID is required' });
-        }
-
         // Find the user by ID and populate the links field
         const user = await User.findById(req.user.id).select('links');
         if (!user || !user.links || user.links.length === 0) {
@@ -25,18 +20,13 @@ const getURL = async (req, res) => {
     }
 };
 
-
 const download = async (req, res) => {
     try {
-        // Ensure the user ID is available
-        if (!req.user || !req.user.id) {
-            return res.status(400).json({ error: 'User ID is required' });
-        }
-
+       
         const userId = req.user.id;
 
         // Fetch the user's expenses
-        const expenses = await Expense.find({ UserId: userId });
+        const expenses = await Expense.find({ userId: userId });
         if (!expenses || expenses.length === 0) {
             return res.status(404).json({ error: 'No expenses found for this user' });
         }
@@ -46,7 +36,7 @@ const download = async (req, res) => {
         const fileName = `Expense${userId}/${new Date().toISOString()}.txt`;
 
         // Upload the file to S3
-        const fileURL = await s3Service.uploadToS3(fileName, stringifyExpenses);
+        const fileURL = await s3Service.uploadtoS3(fileName, stringifyExpenses);
         if (!fileURL) {
             return res.status(500).json({ error: 'Failed to upload file to S3' });
         }
@@ -69,18 +59,24 @@ const download = async (req, res) => {
     }
 };
 
-
 const getExpense = async (req, res) => {
-    const page = parseInt(req.query.page, 10) || 1;
-    const ITEMS_PER_PAGE = 2; 
-    let totalItems, totalPages;
-
     try {
-        // Count total number of expenses for the user
-        totalItems = await Expense.countDocuments({ UserId: req.user.id });
+        const page = parseInt(req.query.page, 10) || 1;
+        const ITEMS_PER_PAGE = 3;
 
-        // Calculate total pages
-        totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+        // Ensure page number is positive
+        if (page < 1) {
+            return res.status(400).json({ error: 'Page number must be greater than 0' });
+        }
+
+        // Get total number of expenses
+        const totalItems = await Expense.countDocuments({ userId: req.user.id });
+        const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+        // Ensure page number does not exceed total pages
+        if (page > totalPages) {
+            return res.status(400).json({ error: 'Page number exceeds total pages' });
+        }
 
         // Fetch expenses with pagination
         const expenses = await Expense.find({ userId: req.user.id })
@@ -88,12 +84,12 @@ const getExpense = async (req, res) => {
             .limit(ITEMS_PER_PAGE);
 
         res.status(200).json({
-            expenses: expenses,
+            expenses,
             currentPage: page,
             hasPreviousPage: page > 1,
-            hasNextPage: ITEMS_PER_PAGE * page < totalItems,
-            nextPage: page + 1,
-            previousPage: page - 1,
+            hasNextPage: page < totalPages,
+            nextPage: page < totalPages ? page + 1 : null,
+            previousPage: page > 1 ? page - 1 : null,
             lastPage: totalPages,
         });
     } catch (err) {
@@ -148,7 +144,6 @@ const postExpense = async (req, res) => {
     }
 };
 
-
 const deleteExpense = async (req, res) => {
     const session = await mongoose.startSession(); // Start a new session for the transaction
     session.startTransaction();
@@ -197,7 +192,6 @@ const deleteExpense = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
-
 
 function isValid(data) {
    return data === undefined || data === null || (typeof data === 'string' && data.trim().length === 0);

@@ -1,6 +1,7 @@
 const Order = require('../models/premium'); // Make sure this is updated to use Mongoose
 const User = require('../models/usermodel'); // Make sure this is updated to use Mongoose
 const userController = require('./userControl');
+const mongoose = require('mongoose');
 require('dotenv').config();
 const Razorpay = require('razorpay');
 
@@ -62,5 +63,19 @@ console.log('pament',payment_id);
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: err.message, message: 'Something went wrong' });
+    }
+};
+
+module.exports.getUserLeaderBoard = async (req, res) => {
+    try {
+        // Fetch and sort users by 'total' in descending order
+        const leaderboard = await User.find({})
+            .sort({ total: -1 }) // Sort by 'total' in descending order
+            .exec(); // Execute the query
+
+        res.status(200).json(leaderboard);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred while fetching the leaderboard', error: error.message });
     }
 };

@@ -3,72 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Expense Tracker</title>
     <style>
         body {
-      font-family: Arial, sans-serif;
-    }
-    form {
-      max-width: 400px;
-      margin: 0 auto;
-    }
-    input[type="number"],
-    input[type="text"],
-    select,
-    button {
-      display: block;
-      width: 50%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    } 
-    button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #4CAF50;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        input[type="number"],
+        input[type="text"],
+        select,
+        button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        #expenseList li,
+        #url_list li {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #url_list button {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
+        #url_list button:hover {
+            background: #cc0000;
+        }
+        #pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        #pagination button {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #pagination button:hover {
+            background-color: #f0f0f0;
+        }
+        #leaderboard {
+            padding: 10px;
+        }
+        #leaderboard li {
+            padding: 5px 0;
+        }
     </style>
 </head>
 <body>
-    <form >
-        <h2>Add expenses</h2>
-        <input type="number" name="amount" placeholder="Choose expenseamount" required  >
-        <input type="text" name="description" placeholder="Choose Description" required  >
-        <select name="category" id="category" placeholder="Choose a category">
-            <option value="food">Food</option>
-            <option value="movies">Movies</option>
-            <option value="adventure">Adventure</option>
-            <option value="shoping">Shoping</option>
-          </select>
-        <button type="submit">Add expense</button>
-        <a href="../signup/signup.html">New-User-click here to signup</a>
-      </form>
-      <p id="message"></p>
-      <button type="button" id="premiumBtn">Buy Premium</button>
-      <button id="downloadBtn" onclick="download()">Download expense</button><br>
-      <ul id="url_list"></ul>
-      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-      <div>
-        <h1>expenses</h1>
-        <ul id="expenseList">
-        </ul>
-        <ul id="pagination"></ul>
-       
-        <ul id="leaderboard">
+    <div class="container">
+        <form>
+            <h2>Add Expenses</h2>
+            <input type="number" name="amount" placeholder="Choose expense amount" required>
+            <input type="text" name="description" placeholder="Choose Description" required>
+            <select name="category" id="category" placeholder="Choose a category">
+                <option value="food">Food</option>
+                <option value="movies">Movies</option>
+                <option value="adventure">Adventure</option>
+                <option value="shopping">Shopping</option>
+            </select>
+            <button type="submit">Add Expense</button>
+            <a href="../signup/signup.html">New User? Click here to Sign Up</a>
+        </form>
 
-        </ul>
-      </div>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" 
-  integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" 
-  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <div class="section">
+            <p id="message"></p>
+            <button type="button" id="premiumBtn">Buy Premium</button>
+            <button id="downloadBtn" onclick="download()">Download Expense</button>
+        </div>
 
-      <script src="expense.js"></script>
-    
+        <ul id="url_list"></ul>
+
+        <div class="section">
+            <h1>Expenses</h1>
+            <ul id="expenseList"></ul>
+            <ul id="pagination"></ul>
+        </div>
+
+        <div class="section">
+            <h1>Leaderboard</h1>
+            <ul id="leaderboard"></ul>
+        </div>
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" 
+        integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="expense.js"></script>
 </body>
 </html>
