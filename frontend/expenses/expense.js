@@ -1,3 +1,5 @@
+//const { response } = require("express");
+
 const form = document.querySelector('form');
 const expenseList = document.getElementById('expenseList');
 
@@ -64,7 +66,7 @@ function getProducts(page) {
     axios.get(`http://localhost:3000/user/getexpense?page=${page}`, { headers: { Authorization: token } })
         .then((response) => {
             displayAllExpenses(response.data.expenses); // Update UI with new expenses
-            console.log(response.data);
+            //console.log(response.data);
             showPagination(response.data); // Update pagination buttons
         })
         .catch((error) => {
@@ -171,12 +173,17 @@ function showLeaderboard() {
 async function download() {
     const token = localStorage.getItem('token');
     try {
-        const response = await axios.get('http://localhost:3000/user/download', { headers: { Authorization: token } });
-        if (response.status === 201) {
-            const a = document.createElement("a");
-            a.href = response.data.fileURL;
-            a.download = 'myexpense.csv';
-            a.click();
+        const response = await axios.get('http://localhost:3000/user/download',
+             { headers: { Authorization: token } , responseType:'blob'} );
+        if (response.status === 200) {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'expenses.csv');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
         } else {
             throw new Error(response.data.message);
         }
@@ -184,29 +191,29 @@ async function download() {
         console.log("Error fetching download link", error);
     }
 
-    try {
-        const URLs = await axios.get('http://localhost:3000/user/geturl', { headers: { Authorization: token } });
-        if (URLs.data.url.length) {
-            URLs.data.url.forEach(url => showUrl(url));
-        } else {
-            console.log('No URLs available');
-        }
-    } catch (error) {
-        console.log('Error fetching URLs', error);
-    }
+    // try {
+    //     const URLs = await axios.get('http://localhost:3000/user/geturl', { headers: { Authorization: token } });
+    //     if (URLs.data.url.length) {
+    //         URLs.data.url.forEach(url => showUrl(url));
+    //     } else {
+    //         console.log('No URLs available');
+    //     }
+    // } catch (error) {
+    //     console.log('Error fetching URLs', error);
+    // }
 }
 
 // Show URLs
-function showUrl(link) {
-    const parent = document.getElementById('url_list');
-    const child = document.createElement('li');
-    const closeBtn = document.createElement('button');
-    closeBtn.innerText = "Close";
-    closeBtn.onclick = () => parent.removeChild(child); // Remove URL from list
-    child.textContent = `Already Downloaded - ${link.URL}`;
-    child.appendChild(closeBtn);
-    parent.appendChild(child);
-}
+// function showUrl(link) {
+//     const parent = document.getElementById('url_list');
+//     const child = document.createElement('li');
+//     const closeBtn = document.createElement('button');
+//     closeBtn.innerText = "Close";
+//     closeBtn.onclick = () => parent.removeChild(child); // Remove URL from list
+//     child.textContent = `Already Downloaded - ${link.URL}`;
+//     child.appendChild(closeBtn);
+//     parent.appendChild(child);
+// }
 
 // Show pagination controls
 function showPagination({ currentPage, hasNextPage, nextPage, hasPreviousPage, previousPage }) {
@@ -226,8 +233,8 @@ function showPagination({ currentPage, hasNextPage, nextPage, hasPreviousPage, p
 
     // Current Page Button
     const btnCurrent = document.createElement('button');
-    btnCurrent.textContent = currentPage;
-    btnCurrent.classList.add('pagination-button');
+    btnCurrent.textContent = currentPage; // Display the current page number
+    btnCurrent.classList.add('pagination-button', 'current-page');
     btnCurrent.setAttribute('aria-label', `Current page ${currentPage}`);
     btnCurrent.disabled = true;
     pagination.appendChild(btnCurrent);
@@ -243,3 +250,5 @@ function showPagination({ currentPage, hasNextPage, nextPage, hasPreviousPage, p
     }
     pagination.appendChild(btnNext);
 }
+
+

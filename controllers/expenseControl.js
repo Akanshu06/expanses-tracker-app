@@ -3,11 +3,12 @@ const Expense = require('../models/expenseModel');
 const User = require('../models/usermodel'); 
 const s3Service=require('../service/s3');
 require('dotenv').config();
+const {Parser} = require('json2csv');
 
 const getURL = async (req, res) => {
     try {
         // Find the user by ID and populate the links field
-        const user = await User.findById(req.user.id).select('links');
+        const user = await User.find(req.user.id).select('links');
         if (!user || !user.links || user.links.length === 0) {
             return res.status(404).json({ error: 'No URLs found for this user' });
         }
@@ -23,36 +24,19 @@ const getURL = async (req, res) => {
 const download = async (req, res) => {
     try {
        
-        const userId = req.user.id;
+        const expenses = await Expense.find({ userId: req.user._id });
 
-        // Fetch the user's expenses
-        const expenses = await Expense.find({ userId: userId });
-        if (!expenses || expenses.length === 0) {
-            return res.status(404).json({ error: 'No expenses found for this user' });
-        }
+        // Prepare data for CSV
+        const fields = ['date', 'description', 'amount', 'category']; // Specify the fields to include in the CSV
+        const opts = { fields };
+        const parser = new Parser(opts);
+        const csv = parser.parse(expenses);
 
-        // Stringify expenses for S3 upload
-        const stringifyExpenses = JSON.stringify(expenses);
-        const fileName = `Expense${userId}/${new Date().toISOString()}.txt`;
+        // Set headers and send CSV file
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename=expenses.csv');
+        return res.status(200).send(csv);
 
-        // Upload the file to S3
-        const fileURL = await s3Service.uploadtoS3(fileName, stringifyExpenses);
-        if (!fileURL) {
-            return res.status(500).json({ error: 'Failed to upload file to S3' });
-        }
-
-        // Update the user's links
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { $push: { links: { URL: fileURL } } },
-            { new: true, useFindAndModify: false }
-        );
-        if (!updatedUser) {
-            return res.status(500).json({ error: 'Failed to update user links' });
-        }
-
-        // Respond with the URL and success status
-        res.status(201).json({ fileURL, success: true });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -61,22 +45,20 @@ const download = async (req, res) => {
 
 const getExpense = async (req, res) => {
     try {
-        const page = parseInt(req.query.page, 10) || 1;
+        const page = parseInt(req.query.page) || 1;
         const ITEMS_PER_PAGE = 3;
+
+        console.log('Requested Page:', page);
 
         // Ensure page number is positive
         if (page < 1) {
+            console.log('Error: Page number must be greater than 0');
             return res.status(400).json({ error: 'Page number must be greater than 0' });
         }
 
         // Get total number of expenses
         const totalItems = await Expense.countDocuments({ userId: req.user.id });
         const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-
-        // Ensure page number does not exceed total pages
-        if (page > totalPages) {
-            return res.status(400).json({ error: 'Page number exceeds total pages' });
-        }
 
         // Fetch expenses with pagination
         const expenses = await Expense.find({ userId: req.user.id })
@@ -97,6 +79,7 @@ const getExpense = async (req, res) => {
         res.status(500).json({ error: "Failed to fetch expenses" });
     }
 };
+
 
 const postExpense = async (req, res) => {
     const session = await mongoose.startSession(); // Start a new session for the transaction

@@ -24,6 +24,25 @@
         h1, h2 {
             color: #4CAF50;
         }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #4CAF50;
+        }
+        .header button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .header button:hover {
+            background-color: #d32f2f;
+        }
         form {
             display: flex;
             flex-direction: column;
@@ -57,6 +76,8 @@
             color: #4CAF50;
             text-decoration: none;
             font-weight: bold;
+            text-align: center;
+            display: block;
         }
         a:hover {
             text-decoration: underline;
@@ -92,7 +113,7 @@
             justify-content: center;
             gap: 10px;
         }
-        #pagination button {
+        #pagination-button {
             padding: 5px 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -100,7 +121,7 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        #pagination button:hover {
+        #pagination-button:hover {
             background-color: #f0f0f0;
         }
         #leaderboard {
@@ -109,14 +130,40 @@
         #leaderboard li {
             padding: 5px 0;
         }
+
+
+
+.pagination-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.pagination-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.current-page {
+    background-color: #0056b3;  
+}
+
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="header">
+            <h1>Expense Tracker</h1>
+            <button id="logoutBtn">Logout</button>
+        </div>
         <form>
             <h2>Add Expenses</h2>
-            <input type="number" name="amount" placeholder="Choose expense amount" required>
-            <input type="text" name="description" placeholder="Choose Description" required>
+            <input type="number" name="amount" placeholder="Enter expense amount" required>
+            <input type="text" name="description" placeholder="Enter description" required>
             <select name="category" id="category" placeholder="Choose a category">
                 <option value="food">Food</option>
                 <option value="movies">Movies</option>
@@ -124,7 +171,7 @@
                 <option value="shopping">Shopping</option>
             </select>
             <button type="submit">Add Expense</button>
-            <a href="../signup/signup.html">New User? Click here to Sign Up</a>
+            
         </form>
 
         <div class="section">
@@ -146,6 +193,13 @@
             <ul id="leaderboard"></ul>
         </div>
     </div>
+
+    <script>
+        const logoutBtn = document.getElementById('logoutBtn');
+        logoutBtn.addEventListener('click',()=>{
+            window.location.href = '../login/login.html';
+        })
+    </script>
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" 
