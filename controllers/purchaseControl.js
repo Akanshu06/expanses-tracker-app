@@ -6,11 +6,14 @@ require('dotenv').config();
 const Razorpay = require('razorpay');
 
 module.exports.purchasePremium = async (req, res) => {
+    console.log(process.env.RAZORPAY_KEY_ID,process.env.RAZORPAY_KEY_SECRET);
+    
     try {
         const rzp = new Razorpay({
             key_id: process.env.RAZORPAY_KEY_ID,
             key_secret: process.env.RAZORPAY_KEY_SECRET
         });
+        console.log(rzp);
         const amount = 2500;
         rzp.orders.create({ amount, currency: "INR" }, async (err, order) => {
             if (err) {

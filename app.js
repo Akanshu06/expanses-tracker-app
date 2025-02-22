@@ -40,7 +40,7 @@ const port = process.env.PORT || 3000;
 // Start server
 const startServer = async () => {
   try {
-    await mongoose.connect('mongodb+srv://akanshu06:pXc2pU1kMwXDBoLX@cluster0.wabi6zo.mongodb.net/expenceTracker');
+    await mongoose.connect('mongodb+srv://expuser:V4wlUTOCckoZfrPY@cluster0.wabi6zo.mongodb.net/expenceTracker');
     console.log('Connected to MongoDB');
     app.listen(port, () => {
       console.log('Server is running on port 3000');
