@@ -28,8 +28,12 @@ app.use(express.json());
  app.use('/user', userRoutes);
  app.use('/purchase', purchaseRoutes);
  app.use('/password', passwordRoutes);
+ 
 
- app.use(express.static(path.join(__dirname, 'frontend')));
+ app.use(express.static(path.join(__dirname, '/frontend'))); 
+ app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'login', 'login.html'));
+});
 
 //  app.use((req,res)=>{
 //   //console.log(req.url);
@@ -43,7 +47,7 @@ const startServer = async () => {
     await mongoose.connect('mongodb+srv://expuser:V4wlUTOCckoZfrPY@cluster0.wabi6zo.mongodb.net/expenceTracker');
     console.log('Connected to MongoDB');
     app.listen(port, () => {
-      console.log('Server is running on port 3000');
+      console.log(`Server is running on port ${port}`);
     });
   } catch (err) {
     console.error('Database connection error:', err);
