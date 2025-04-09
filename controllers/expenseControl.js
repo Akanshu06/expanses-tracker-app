@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Expense = require('../models/expenseModel'); 
+const Expense = require('../models/expensemodel'); 
 const User = require('../models/usermodel'); 
 const s3Service=require('../service/s3');
 require('dotenv').config();
