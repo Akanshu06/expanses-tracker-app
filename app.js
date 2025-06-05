@@ -29,21 +29,23 @@ app.use(express.json());
  app.use('/purchase', purchaseRoutes);
  app.use('/password', passwordRoutes);
 
- app.use(express.static(path.join(__dirname, 'frontend')));
+//  app.use(express.static(path.join(__dirname, 'frontend')));
 
-//  app.use((req,res)=>{
-//   //console.log(req.url);
-//   res.sendFile(path.join(__dirname,`frontend/${req.url}`))
-// })
+app.use(express.static(path.join(__dirname, 'frontend')));
+
+// Fallback to login page if route not matched
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'login', 'login.html'));
+});
 
 const port = process.env.PORT || 3000;
 // Start server
 const startServer = async () => {
   try {
-    await mongoose.connect('mongodb+srv://akanshu06:pXc2pU1kMwXDBoLX@cluster0.wabi6zo.mongodb.net/expenceTracker');
+    await mongoose.connect(process.env.URL);
     console.log('Connected to MongoDB');
     app.listen(port, () => {
-      console.log('Server is running on port 3000');
+      console.log(`Server is running on port ${port}`);
     });
   } catch (err) {
     console.error('Database connection error:', err);

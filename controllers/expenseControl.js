@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Expense = require('../models/expenseModel'); 
+const Expense = require('../models/expensemodel'); 
 const User = require('../models/usermodel'); 
 const s3Service=require('../service/s3');
 require('dotenv').config();
@@ -48,7 +48,7 @@ const getExpense = async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const ITEMS_PER_PAGE = 3;
 
-        console.log('Requested Page:', page);
+      //  console.log('Requested Page:', page);
 
         // Ensure page number is positive
         if (page < 1) {

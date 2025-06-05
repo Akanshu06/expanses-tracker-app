@@ -7,6 +7,8 @@ const Razorpay = require('razorpay');
 
 module.exports.purchasePremium = async (req, res) => {
     try {
+       // console.log(process.env.RAZORPAY_KEY_ID);
+        
         const rzp = new Razorpay({
             key_id: process.env.RAZORPAY_KEY_ID,
             key_secret: process.env.RAZORPAY_KEY_SECRET
