@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Crown, Download, TrendingUp, Star, Check } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
+//import Razorpay from 'razorpay'
 
 const PremiumFeatures = () => {
   const { user, updateUserPremiumStatus } = useAuth()
@@ -15,6 +16,8 @@ const PremiumFeatures = () => {
       const response = await axios.get('http://localhost:3000/purchase/premiummembership', {
         headers: { Authorization: token }
       })
+      console.log(response.data);
+      
 
       const options = {
         key: response.data.key_id,

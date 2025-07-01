@@ -2,7 +2,7 @@ const User = require('../models/usermodel');
 const ForgetPasswordRequest = require('../models/password'); // Assuming you renamed the file correctly
 const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require('uuid');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 // Set up transporter with your SMTP server details

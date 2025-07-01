@@ -5,7 +5,7 @@ import ExpenseList from './ExpenseList'
 import PremiumFeatures from './PremiumFeatures'
 import Leaderboard from './Leaderboard'
 import { useAuth } from '../context/AuthContext'
-import { TrendingUp, DollarSign, Calendar, Target } from 'lucide-react'
+import { TrendingUp, IndianRupee , Calendar, Target } from 'lucide-react'
 import axios from 'axios'
 
 const Dashboard = () => {
@@ -88,7 +88,7 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="stats-card">
               <div className="flex items-center justify-between mb-2">
-                <DollarSign className="w-8 h-8 text-primary-600" />
+                <IndianRupee  className="w-8 h-8 text-primary-600" />
                 <span className="text-2xl">💰</span>
               </div>
               <h3 className="text-2xl font-bold text-neutral-900">
