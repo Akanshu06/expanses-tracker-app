@@ -3,6 +3,8 @@ import { LogOut, User, Settings, Crown, Menu, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Header = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()

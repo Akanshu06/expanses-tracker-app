@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { Mail, ArrowLeft, Send, CheckCircle } from 'lucide-react'
 import axios from 'axios'
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const ForgotPassword = () => {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
@@ -15,7 +17,7 @@ const ForgotPassword = () => {
     setError('')
 
     try {
-      await axios.post('http://localhost:3000/password/forget-password', { mail: email })
+      await axios.post(`${BASE_URL}/password/forget-password`, { mail: email })
       setSuccess(true)
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to send reset email. Please try again.')

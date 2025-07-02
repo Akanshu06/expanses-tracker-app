@@ -3,6 +3,7 @@ import { Crown, Download, TrendingUp, Star, Check } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
 //import Razorpay from 'razorpay'
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const PremiumFeatures = () => {
   const { user, updateUserPremiumStatus } = useAuth()
@@ -13,7 +14,7 @@ const PremiumFeatures = () => {
     setLoading(true)
     try {
       const token = localStorage.getItem('token')
-      const response = await axios.get('http://localhost:3000/purchase/premiummembership', {
+      const response = await axios.get(`${BASE_URL}/purchase/premiummembership`, {
         headers: { Authorization: token }
       })
       console.log(response.data);
@@ -25,7 +26,7 @@ const PremiumFeatures = () => {
         handler: async function (response) {
           try {
             const res = await axios.post(
-              'http://localhost:3000/purchase/purchasetransactionstatus',
+              `${BASE_URL}/purchase/purchasetransactionstatus`,
               {
                 order_id: options.order_id,
                 payment_id: response.razorpay_payment_id,
@@ -35,7 +36,7 @@ const PremiumFeatures = () => {
             
             localStorage.setItem('token', res.data.token)
             updateUserPremiumStatus(true)
-            alert('🎉 Welcome to Premium! You now have access to all premium features.')
+            alert('🎉 🙏 Welcome to Premium! You now have access to all premium features.')
           } catch (error) {
             console.error('Payment verification failed:', error)
             alert('Payment verification failed. Please contact support.')
@@ -64,7 +65,7 @@ const PremiumFeatures = () => {
     setDownloading(true)
     try {
       const token = localStorage.getItem('token')
-      const response = await axios.get('http://localhost:3000/user/download', {
+      const response = await axios.get(`${BASE_URL}/user/download`, {
         headers: { Authorization: token },
         responseType: 'blob'
       })

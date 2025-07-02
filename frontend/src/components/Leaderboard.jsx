@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Trophy, Medal, Award, TrendingUp } from 'lucide-react'
 import axios from 'axios'
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([])
   const [loading, setLoading] = useState(true)
@@ -14,7 +15,7 @@ const Leaderboard = () => {
   const fetchLeaderboard = async () => {
     try {
       const token = localStorage.getItem('token')
-      const response = await axios.get('http://localhost:3000/purchase/premiumFeature', {
+      const response = await axios.get(`${BASE_URL}/purchase/premiumFeature`, {
         headers: { Authorization: token }
       })
       setLeaderboard(response.data)

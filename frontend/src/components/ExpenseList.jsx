@@ -2,6 +2,8 @@ import React from 'react'
 import { Trash2, Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
 import axios from 'axios'
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const ExpenseList = ({ expenses, pagination, currentPage, onPageChange, onExpenseDeleted, loading }) => {
   const handleDelete = async (expenseId) => {
     if (!window.confirm('Are you sure you want to delete this expense?')) {
@@ -10,7 +12,7 @@ const ExpenseList = ({ expenses, pagination, currentPage, onPageChange, onExpens
 
     try {
       const token = localStorage.getItem('token')
-      await axios.delete(`http://localhost:3000/user/deleteexpense/${expenseId}`, {
+      await axios.delete(`${BASE_URL}/user/deleteexpense/${expenseId}`, {
         headers: { Authorization: token }
       })
       onExpenseDeleted()

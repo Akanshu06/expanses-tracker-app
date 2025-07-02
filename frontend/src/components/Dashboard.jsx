@@ -8,6 +8,8 @@ import { useAuth } from '../context/AuthContext'
 import { TrendingUp, IndianRupee , Calendar, Target } from 'lucide-react'
 import axios from 'axios'
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Dashboard = () => {
   const { user } = useAuth()
   const [expenses, setExpenses] = useState([])
@@ -23,7 +25,7 @@ const Dashboard = () => {
   const fetchExpenses = async (page = 1) => {
     try {
       const token = localStorage.getItem('token')
-      const response = await axios.get(`http://localhost:3000/user/getexpense?page=${page}`, {
+      const response = await axios.get(`${BASE_URL}/user/getexpense?page=${page}`, {
         headers: { Authorization: token }
       })
       

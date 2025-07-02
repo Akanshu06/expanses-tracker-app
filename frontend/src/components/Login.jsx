@@ -4,6 +4,8 @@ import { Eye, EyeOff, Mail, Lock, LogIn, Sparkles } from 'lucide-react'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -30,7 +32,7 @@ const Login = () => {
     setError('')
 
     try {
-      const response = await axios.post('http://localhost:3000/user/login', formData)
+      const response = await axios.post(`${BASE_URL}/user/login`, formData)
       login(response.data.token)
       navigate('/dashboard')
     } catch (err) {
