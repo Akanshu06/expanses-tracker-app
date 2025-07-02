@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Plus, DollarSign, FileText, Tag } from 'lucide-react'
+import { Plus, IndianRupee, FileText, Tag } from 'lucide-react'
 import axios from 'axios'
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -78,7 +78,7 @@ const ExpenseForm = ({ onExpenseAdded }) => {
               Amount
             </label>
             <div className="relative">
-              <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
+              <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
               <input
                 type="number"
                 id="amount"
